@@ -1,6 +1,11 @@
-from flask import Flask, render_template, request 
+from flask import Flask, render_template, request, redirect, url_for, Response
 #pip install flask pandas contextily geopandas matplotlib
 app = Flask(__name__)
+import pymssql
+import pandas as pd
+import matplotlib.pyplot as plot 
+import numpy as np
+conn = pymssql.connect(server = '213.140.22.237\SQLEXPRESS', user = 'biagioni.jacopo', password = 'xxx123##', database = 'biagioni.jacopo')
 
 @app.route('/', methods=['GET'])
 def home():
@@ -17,15 +22,14 @@ def selezione():
     return redirect(url_for('esercizio3'))
 
 @app.route('/esercizio1', methods=['GET'])
-def esercizio1():
-    return render_template("esercizio1.html")
+def esercizio1(): 
+  query = 'SELECT category_name, count(*) as numero_prodotti FROM production.products INNER JOIN production.categories ON production.products.category_id = production.categories.category_id GROUP BY categories.category_name ORDER BY numero_prodotti DESC'
+  df = pd.read_sql(query,conn)
+  return render_template("esercizio1.html", nomiColonne = df.columns.values, dati = list(df.values.tolist()))
 
 @app.route('/result', methods=['GET'])
 def result():
 # Collegamento al database
-    import pandas as pd
-    import pymssql
-    conn = pymssql.connect(server = '213.140.22.237\SQLEXPRESS', user = 'biagioni.jacopo', password = 'xxx123##', database = 'biagioni.jacopo')
     # Invio query al database e ricezione informazioni
     nomeprodotto = request.args['nomeprodotto']
     query = f"select * from production.products where product_name like '{nomeprodotto}%'" #  f(format) prima di una stringa = 'format' + string = serve per inserire una variabile all interno di una stringa
