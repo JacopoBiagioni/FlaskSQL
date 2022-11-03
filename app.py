@@ -13,7 +13,7 @@ conn = pymssql.connect(server = '213.140.22.237\SQLEXPRESS', user = 'biagioni.ja
 
 @app.route('/', methods=['GET'])
 def home():
-    return render_template("home.html") #serve per restituire una stringa
+    return render_template("home.html") 
 
 @app.route('/selezione', methods=['GET'])
 def selezione():
@@ -25,7 +25,7 @@ def selezione():
   elif scelta == 'esercizio3':
     return redirect(url_for('esercizio3'))
   elif scelta == 'esercizio4':
-    return redirect(url_for('esercizio4'))
+    return redirect(url_for('search'))
 
 @app.route('/esercizio1', methods=['GET'])
 def esercizio1(): 
@@ -83,7 +83,6 @@ def search():
 
 @app.route('/esercizio4', methods=['GET'])     
 def esercizio4():
-    conn = pymssql.connect(server = '213.140.22.237\SQLEXPRESS', user = 'biagioni.jacopo', password = 'xxx123##', database = 'biagioni.jacopo')
 
     # Invio query al Database e ricezione informazioni
     NomeProdotto = request.args['NomeProdotto']
