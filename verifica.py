@@ -21,10 +21,14 @@ def ricerca():
 @app.route('/risultato', methods=['GET'])
 def risultato():
     NomeStore = request.args['NomeStore']
-    query = f"select first_name, last_name from sales.staffs inner join sales.stores on sales.staffs.store_id = sales.stores.store_id where store_name like '{NomeStore}' "
+    query = f"SELECT first_name, last_name FROM sales.staffs as sf INNER JOIN sales.stores as st ON sf.store_id = st.store_id WHERE store_name LIKE '{NomeStore}'"
     dfStores = pd.read_sql(query,conn)
-    return render_template('risultato.html', nomiColonne = dfStores.columns.values, dati = list(dfStores.values.tolist()))
+    dati = list(dfStores.values.tolist())
+    if dati == [] :
+        return render_template('erroreStore.html')
+    else:
+        return render_template('risultato.html', nomiColonne = dfStores.columns.values, dati = list(dfStores.values.tolist()))
 
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=3245, debug=True) 
+  app.run(host='0.0.0.0', port=3245, debug=True)
